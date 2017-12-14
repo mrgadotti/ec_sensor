@@ -1,0 +1,76 @@
+1
+00:00:00,000 --> 00:00:03,000
+Dubber: Rockets Subtitle: Grey
+
+2
+00:00:03,000 --> 00:00:10,000
+Today, we'll demonstrate how to calibrate the DFRobot electrical conductivity meter (EC meter)
+
+3
+00:00:10,000 --> 00:00:17,000
+First, we need to upload the calibration sketch to the Arduino board.
+
+4
+00:00:17,000 --> 00:00:23,000
+This sketch is used for the calibration and normal use
+
+5
+00:00:23,000 --> 00:00:27,000
+This is the code "EC Calibration"
+
+6
+00:00:27,000 --> 00:00:37,000
+Sketches and connection diagrams will be released on the product wiki page later
+
+7
+00:00:37,000 --> 00:00:57,000
+EC meter connects to "A1" and DS18B20 temperature sensor connects to "D2"
+
+8
+00:00:57,000 --> 00:01:07,000
+Select the right Arduino board and right COM port
+
+9
+00:01:07,000 --> 00:01:41,000
+Oooops, looking for the right COM port...
+
+10
+00:01:41,000 --> 00:01:46,000
+OK Got it.
+
+11
+00:01:46,000 --> 00:01:56,000
+Now upload the sketch...
+
+12
+00:01:56,000 --> 00:02:02,000
+Now, open the serial monitor
+
+13
+00:02:02,000 --> 00:02:08,000
+Select "115200" and "Both NL &amp; CR"
+
+14
+00:02:08,000 --> 00:02:16,000
+Plug the probe in the 12.88 conductivity solution, if everything goes well, you will see the data in the serial monitor
+
+15
+00:02:16,000 --> 00:02:30,500
+If you find the value incorrect, you can make a calibration
+
+16
+00:02:30,500 --> 00:02:49,439
+Send "Calibration" to the serial port, and you'll enter Calibration mode
+
+17
+00:02:49,439 --> 00:03:05,000
+Enter "Confirm" to confirm the calibration result
+
+18
+00:03:05,000 --> 00:03:20,000
+Enter "exit" to exit "Calibration Mode"
+
+19
+00:03:20,000 --> 00:03:33,039
+DFRobot - Drive the Future
+

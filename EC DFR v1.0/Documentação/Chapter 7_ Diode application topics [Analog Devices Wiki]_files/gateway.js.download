@@ -1,0 +1,56 @@
+
+var IPECanRun = true;
+var IPElID;
+var hc1;
+
+
+if ((window.location.href.indexOf("www-dev.corpnt.analog.com/en") >= 0) || (window.location.href.indexOf("analog.com/en") >= 0)) { //To be activated on launch!!!
+    IPElID = 1;
+    hc1 = "&hc=3181";
+} else if ((window.location.href.indexOf("www-dev.corpnt.analog.com/cn") >= 0) || (window.location.href.indexOf("analog.com/cn") >= 0)) { //To be activated on launch!!!
+    IPElID = 6;
+    hc1 = "&hc=219573";
+} else {
+    IPECanRun = false;
+}
+
+
+
+//Client requested block on IE 8
+(function() {
+    var isIE = function() {
+        var ua = navigator.userAgent.toLowerCase(),
+        isOpera = (ua.indexOf('opera') != -1);
+        return ua.indexOf('msie') != -1 && !isOpera && (ua.indexOf('webtv') == -1);
+    },
+
+    IEMajorVersion = function() {
+        var m = /MSIE\s*(\d*)/.exec(navigator.userAgent),
+            v = (m && m[1]) || -1;
+        if(isNaN(parseInt(v, 10))) {
+            v = -1;
+        }
+        return v;
+    };
+
+    if(isIE() && IEMajorVersion() < 9) {
+        IPECanRun = false;
+    }
+})();
+
+if (((window.location.href.indexOf("analog.com/designtools/en/signalchaindesigner") > -1) ||
+    (window.location.href.indexOf("dev.corpnt.analog.com/designtools/en/signalchaindesigner") > -1)) ||
+    ((typeof AdiCm != 'undefined') && (AdiCm.SCD))) {
+        IPECanRun = false;
+}
+
+if(IPECanRun) {
+    (function (d, f) {
+        var s = d.createElement('script'), a = "async", b = "defer";
+        s.setAttribute(a, a);
+        s.setAttribute(b, b);
+        s.type = 'text/javascript';
+        s.src = f;
+        d.getElementsByTagName('head')[0].appendChild(s);
+    })(document, document.location.protocol + "//ips-invite.iperceptions.com/webValidator.aspx?sdfc=6f94bf71-120335-42ba72b4-5142-4da2-9f06-357f5e949d51&lID=" + IPElID + "&loc=STUDY&cD=90&rF=False&iType=1 " + hc1 +"&domainname=0&source=91787");
+}

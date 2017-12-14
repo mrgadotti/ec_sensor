@@ -1,0 +1,10 @@
+jQuery.getScript( "//www.googleadservices.com/pagead/conversion_async.js" )
+.done(function( s, Status ) {
+
+  	window.google_tag_params = {};
+		_satellite.track('GoogleRemarketingTrack');
+  
+})
+.fail(function( jqxhr, settings, exception ) {
+  console.warn( "Remarketing tag not loaded:"+exception );
+});

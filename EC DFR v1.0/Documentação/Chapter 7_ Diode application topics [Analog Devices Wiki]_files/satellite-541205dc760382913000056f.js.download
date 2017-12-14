@@ -1,0 +1,9 @@
+jQuery(document).ajaxComplete(function(event,request,settings){
+	if(location.pathname.indexOf("/search")>-1){
+		try{
+			window.resultCount = request.responseJSON.GetAllSearchResultsResult.RecordCount;
+			window.searchTerm = jQuery("input[name=searchTerm]").val();
+		}catch(e){}	
+	}
+});
+

@@ -1,0 +1,17 @@
+(function (a, b, c, d) {
+    a = '//assets.adobedtm.com/50979bd26cd331a01d5fdada46d46662a6c23d1e/satelliteLib-6918599d4993e6e0537845174bbba34655d0ec94.js';
+    b = document; c = 'script'; d = b.createElement(c); d.src = a; d.type = 'text/java' + c; d.async = true;
+    a = b.getElementsByTagName(c)[0]; a.parentNode.insertBefore(d, a);
+    d.onload = d.onreadystatechange = function () {
+        if ('_satellite' in window && window['_satellite'] != null) {
+            //alert(_satellite);
+            _satellite.pageBottom();
+        }
+    };
+})();
+
+
+
+
+
+

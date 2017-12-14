@@ -1,0 +1,73 @@
+_satellite.pushAsyncScript(function(event, target, $variables){
+  if (localStorage.getItem('downloadGoals') && getCookie("downloadGoals")) {
+  downloadGoalsEvent()
+} else {
+  jQuery.get('/media/downloadgoals.csv', function(data) {
+    var downloadGoals = data.split('\n');
+    var downloadGoalsSplit = [];
+    for(i=0;i<downloadGoals.length;i++) {
+      downloadGoalsSplit[i] = downloadGoals[i].split(',');
+    }
+    downloadGoals = JSON.stringify(downloadGoalsSplit);
+    localStorage.setItem('downloadGoals',downloadGoals);
+  })
+  .done(function(){
+  	downloadGoalsEvent();
+  });
+}
+
+function downloadGoalsEvent() {
+  if(localStorage.getItem('downloadGoals') && localStorage.getItem('downloadGoals') !== null) {
+    var downloadGoalsArray = JSON.parse(localStorage.getItem('downloadGoals'));
+    var urlPlaceholder = "";
+    for(i=0;i<downloadGoalsArray.length;i++){
+      urlPlaceholder = downloadGoalsArray[i][0];
+      jQuery('.content a[href*="' + urlPlaceholder + '"]').on('click',function(){
+        var key = $(this).attr('href');
+        jQuery.ajax({
+          type: "GET",
+          data: {
+            eventName: 'ADEF-Download',
+            text: 'DTM',
+            key: key,
+            data: 'ADEF-Download'
+          },
+          dataType: "jsonp",
+          crossDomain: !0,
+          url: "/services/SitecoreAnalyticsService.svc/TrackGoal",
+          success: function () {
+          
+          },
+          error: function () {
+            console.log('track goal GET failure');
+          }
+        });
+      });
+    }
+    setCookie("downloadGoals","current",1);
+  }
+}
+
+
+function setCookie(cname, cvalue, exdays) {
+    var d = new Date();
+    d.setTime(d.getTime() + (exdays*24*60*60*1000));
+    var expires = "expires="+ d.toUTCString();
+    document.cookie = cname + "=" + cvalue + ";" + expires + ";path=/";
+}
+
+function getCookie(cname) {
+    var name = cname + "=";
+    var ca = document.cookie.split(';');
+    for(var i = 0; i <ca.length; i++) {
+        var c = ca[i];
+        while (c.charAt(0)==' ') {
+            c = c.substring(1);
+        }
+        if (c.indexOf(name) == 0) {
+            return c.substring(name.length,c.length);
+        }
+    }
+    return "";
+}
+});

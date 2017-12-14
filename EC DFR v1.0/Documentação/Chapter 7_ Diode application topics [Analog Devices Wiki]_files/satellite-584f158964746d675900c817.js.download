@@ -1,0 +1,12 @@
+_satellite.pushAsyncScript(function(event, target, $variables){
+  var link = _satellite.getVar('Page Name');
+if (link.indexOf("/cn/") > -1) {
+  	jQuery('a[name$="__1564b1ac-e442-4bbf-b5af-d9d591650413"][class="analogPST"]').attr("href","http://www.linear.com.cn/products/Power_Management");
+  }
+  else if (link.indexOf("/jp/") > -1) {
+  	jQuery('a[name$="__1564b1ac-e442-4bbf-b5af-d9d591650413"][class="analogPST"]').attr("href","http://www.linear-tech.co.jp/products/Power_Management");
+  }
+  else {
+  	jQuery('a[name$="__1564b1ac-e442-4bbf-b5af-d9d591650413"][class="analogPST"]').attr("href","http://www.linear.com/products/Power_Management");
+  }
+});

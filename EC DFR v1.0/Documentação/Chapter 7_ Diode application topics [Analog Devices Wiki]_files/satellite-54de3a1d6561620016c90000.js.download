@@ -1,0 +1,13 @@
+_satellite.pushAsyncScript(function(event, target, $variables){
+  if (window.location.hostname.toLowerCase().indexOf("wcm") < 0) {
+  jQuery('a[name$="_2b4363d1-4e95-48ec-abb6-c23aaa7d58bf"][class="analogPST"]').attr("href","http://www.analog.com/products/application-specific");
+	jQuery('a[name$="_6a1091d6-0018-4858-bdf2-971c413c0bf0"][class="analogPST"]').attr("href","http://www.analog.com/products/application-specific/militaryaerospace/aerospace.html");
+	jQuery('a[name$="_c86e767a-e5b8-4494-a2fb-64e14a2444f7"][class="analogPST"]').attr("href","http://www.analog.com/products/application-specific/multi-chip.html");
+  
+} else {
+  jQuery('a[name$="_2b4363d1-4e95-48ec-abb6-c23aaa7d58bf"][class="analogPST"]').attr("href","/products/application-specific.html");
+	jQuery('a[name$="_6a1091d6-0018-4858-bdf2-971c413c0bf0"][class="analogPST"]').attr("href","/products/application-specific/militaryaerospace/aerospace.html");
+	jQuery('a[name$="_c86e767a-e5b8-4494-a2fb-64e14a2444f7"][class="analogPST"]').attr("href","/products/application-specific/multi-chip.html");
+  
+}
+});

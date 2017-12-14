@@ -1,0 +1,27 @@
+//Need to determine the path to use for the Eloqua JS file.
+var DevQaOrProd = _satellite.getVar('DevQaOrProd');
+var useSvs = false;
+var eloquaJsFilePath = "/i/elqCfg.min.js";
+if (!useSvs) {
+	eloquaJsFileHost = "//img.en25.com"
+	}
+else if (DevQaOrProd=="dev") {
+	eloquaJsFileHost = "//svs-dev.corpnt.analog.com/a/ejs"
+	}
+else if (DevQaOrProd=="qa") {
+	eloquaJsFileHost = "//svs-qa.corpnt.analog.com/a/ejs"
+	}
+else if (DevQaOrProd=="prod") {
+	eloquaJsFileHost = "//svs.analog.com/a/ejs"
+	}
+else {
+	eloquaJsFileHost = "//img.en25.com"
+	}
+var eloquaJsFile = eloquaJsFileHost + eloquaJsFilePath;
+
+//Now we have the actual Eloqua tag.
+var _elqQ = _elqQ || [];
+_elqQ.push(["elqSetSiteId", "1548954099"]);
+_elqQ.push(['elqUseFirstPartyCookie', 'eq.analog.com']);
+_elqQ.push(["elqTrackPageView"]);
+_satellite.loadScript(eloquaJsFile);

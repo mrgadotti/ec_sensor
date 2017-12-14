@@ -1,0 +1,38 @@
+_satellite.pushAsyncScript(function(event, target, $variables){
+  var link = _satellite.getVar('Page Name');
+
+$(document).ready(function() {
+  if(jQuery('#ProductMarketSubMarket a[href$="aerospace-and-defense-pavilion-home.html"]').length > 0) {
+    jQuery('td[data-id="Order"]>a:not(.purchase),a.add-to-cart,a.add-to-inventory').each( function() {
+        attachDTMEventHandler($(this));
+    });
+    jQuery(document).ajaxComplete(function(){
+      jQuery('td.distributor>a,td[data-id="AnalogDevices"]>a:not(.purchase)').each( function() {
+          attachDTMEventHandler(jQuery(this));
+      });
+    });
+  }
+});
+
+function attachDTMEventHandler($el){
+  $el.addClass('dtm-adef')
+  .on('click',function(){
+    $.ajax({
+      type: "GET",
+      data: {
+        eventName: 'ADEF-Buys-Sample',
+        text: 'DTM',
+        key: link,
+        data: 'ADEF-Buys-Sample'
+      },
+      dataType: "jsonp",
+      crossDomain: !0,
+      url: "/services/SitecoreAnalyticsService.svc/TrackGoal",
+      success: function () {},
+      error: function () { }
+    });
+   
+  });
+}
+
+});

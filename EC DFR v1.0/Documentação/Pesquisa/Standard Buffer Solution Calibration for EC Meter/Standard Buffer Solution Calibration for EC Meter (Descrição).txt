@@ -1,0 +1,7 @@
+This video demonstrates how to calibrate the DFRobot electrical conductivity meter (EC meter).
+
+Product can be found at: https://goo.gl/Ms4Za7
+
+Why measure EC? The salinity of the soil, irrigation water systems or fertilizer solutions is an important parameter affecting the root zone environment of your plants. Any of these factors can have a significant effect on plant growth and quality. The presence of high salt levels is your warning sign to make adjustments. Low-salt levels could lead to nutrient deficiencies. Don’t wait for trouble, measure before the damage shows in your plants. In terms of liquid, we often use the reciprocal of resistance, which is conductance, as a measurement. The conductivity of water can reflect the level of electrolytes present in the water. Depending on the concentration of the electrolyte, the conductivity of the aqueous solution is different.
+ 
+The DFRobot Analog EC Meter is unique. It is designed specially for Arduino controllers and has built-in simple, convenient and practical features. After simple connections according to our diagram and uploading the program, you will be able to measure the EC value easily.

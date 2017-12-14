@@ -1,0 +1,19 @@
+/*  iPerceptions DTM  */
+
+(function(){
+  
+	var c=window.document.cookie,r=1000,j="//ips-invite.iperceptions.com/invitations/invitationsJS/120/s120335/gateway.js";
+	if(/(^|;)\s*IPE_BLOCK\s*=1/.test(c)){
+		return;
+	}
+	else if(/(^|;)\s*IPE_FORCE\s*=1/.test(c)){
+		_satellite.loadScript(j);    
+		return;
+	}
+	if(Math.floor((Math.random()*1000))<r){
+		_satellite.loadScript(j);
+	}else{
+		_satellite.setCookie("IPE_BLOCK",1);
+	}
+})();
+

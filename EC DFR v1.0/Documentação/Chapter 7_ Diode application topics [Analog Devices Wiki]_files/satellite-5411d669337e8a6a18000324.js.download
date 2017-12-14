@@ -1,0 +1,287 @@
+//Need to determine the host to use for DemandBase calls
+var DevQaOrProd = _satellite.getVar('DevQaOrProd');
+var useSvs = false;
+var apiHost;
+var pxlHost;
+if (!useSvs) {
+    apiHost = "api.demandbase.com";
+    pxlHost = "//a.company-target.com";
+}
+else if (DevQaOrProd == "dev") {
+  
+      apiHost = "api.demandbase.com";
+    pxlHost = "//a.company-target.com";
+   
+}
+else if (DevQaOrProd == "qa") {
+    apiHost = "svs-qa.corpnt.analog.com/a/db";
+    pxlHost = "//svs-qa.corpnt.analog.com/a/dbp";
+}
+else if (DevQaOrProd == "prod") {
+    apiHost = "svs.analog.com/a/db";
+    pxlHost = "//svs.analog.com/a/dbp";
+}
+else {
+    apiHost = "svs-dev.corpnt.analog.com/a/db";
+    pxlHost = "//svs-dev.corpnt.analog.com/a/dbp";
+}
+
+function _flattenData(data) {
+for (var d in data) {
+  if (data.hasOwnProperty(d)) {
+	if (typeof data[d] == 'object' && data[d] !== null) {
+	  for (var nd in data[d]) {
+		data[d + '_' + nd] = data[d][nd];
+	  }
+	  delete data[d];
+	}
+  }
+}
+return data;
+}
+
+/* DEMANDBASE */
+window.dbP={};
+
+dbP.mapping={
+	industry: "industry",
+	company_name: "company name",
+	country: "country",
+	audience_segment: "audience segment",
+	watch_list_account_type: "wl:account type",
+	sales_coverage: "wl:sales coverage",
+	demandbase_sid : "sid",
+	street_address : "company address",
+	domestichq_company_name : "domestichq company name",
+	worldhq_company_name : "worldhq company name",  
+	watch_list_s_key : "s_key"
+};
+dbP.secondaryMapping = {
+    employee_count: "employee_count",
+    stock_ticker: "stock_ticker",
+    web_site: "web_site",
+    annual_sales: "annual_sales",
+	sub_industry: "sub_industry",
+	primary_sic: "primary_sic",
+	primary_naics: "primary_naics",
+	city: "city",
+	state: "state",
+	zip: "zip",
+	phone: "phone",
+	b2b: "b2b",
+	b2c: "b2c",
+	traffic: "traffic",
+  mktg: "mktg_experiment",
+  demandbase_sid : "sid"
+};
+
+dbP.sess={};
+
+dbP.key;
+
+dbP.value;
+
+dbP._hasProp={}.hasOwnProperty;
+
+dbP.scriptTag=document.getElementsByTagName('script')[0];
+
+dbP.apiHost=apiHost;
+
+dbP.inThirtyMinutes=(function(){var d=new Date();d.setTime(d.getTime()+18E5);return d.toGMTString()})();
+
+dbP.cWrite=function(name,value){var expires="; expires="+dbP.inThirtyMinutes;document.cookie=name+"="+value+expires+"; path=/"};
+
+dbP.cRead=function(name){var ca,i,c;name=name+"=";ca=document.cookie.split(';');for(i=0;i<ca.length;i++){c=ca[i];while(c.charAt(0)==' '){c=c.substring(1,c.length)}if(c.indexOf(name)==0){return c.substring(name.length,c.length)}}return null};
+
+dbP.exists=function(check){if(typeof(check)!=='undefined'){return true}else{return false}};
+
+dbP.supportSessionStorage=dbP.exists(window.Storage);
+
+dbP.stringData=dbP.supportSessionStorage?sessionStorage.sessync:dbP.cRead('sessync');
+
+dbP.getStringData=function(){return dbP.stringData};
+
+dbP.setStringData=function(newVal){dbP.stringData=newVal};
+
+dbP.MetricsAssigned=[];
+dbP.EnhancedMetricsAssigned=[];
+
+dbP.theResults;
+
+dbP.inspect=function(variableToCheck,isDetailed){
+	if((typeof(variableToCheck)!=='undefined')&&variableToCheck!=''&&variableToCheck!== null){
+    
+    return variableToCheck.toString().toLowerCase();
+    
+	}else{
+
+		if(isDetailed){
+			return "error";
+		}else{
+			return "isp visitor";			
+		}  
+    
+	}
+};
+
+if(dbP.supportSessionStorage){
+
+	dbP.setExpires=function(strSetExpire){return strSetExpire.replace('{','{"expires":"'+Date.parse(dbP.inThirtyMinutes)+'",');};
+
+	dbP.getExpires=function(strGetExpire){return strGetExpire.substr(dbP.getStringData().indexOf('expires')+10,13);};
+
+	dbP.storeData=function(dataObject){dbP.setStringData(dbP.setExpires(JSON.stringify(dataObject)));sessionStorage.sessync=dbP.getStringData();};
+
+	dbP.dataIsStored=function(){if(dbP.getStringData()){return(dbP.getExpires(dbP.getStringData())<Date.now())?false:true}else{return false;}};
+
+	dbP.getStoredData=function(){if(sessionStorage.sessync){return JSON.parse(sessionStorage.sessync);}};	
+
+	dbP.reStoreData = function(){sessionStorage.sessync = dbP.setExpires(sessionStorage.sessync.replace(sessionStorage.sessync.substring(0, 27),"{"));};
+}else{
+	dbP.storeData=function(dataObject){dbP.setStringData(JSON.stringify(dataObject));dbP.cWrite('sessync',dbP.getStringData())};
+
+	dbP.dataIsStored=function(){if(dbP.cRead('sessync')){return true}return false};
+
+	dbP.getStoredData=function(){if(dbP.cRead('sessync')){return JSON.parse(dbP.cRead('sessync'))}};
+
+	dbP.reStoreData=function(){var a=dbP.cRead('sessync');if(a){dbP.cWrite('sessync',a);}}
+}
+
+var wl_accountype, wl_salescoverage;
+
+dbP.demandbaseParse=function(dbInfo){
+
+	dbInfo = _flattenData(dbInfo);
+
+	dbP.isDetailed=(dbInfo.information_level==='Detailed')?true:false;
+    
+    for(dbP.key in dbP.secondaryMapping){
+		if(!dbP._hasProp.call(dbP.secondaryMapping,dbP.key))continue;
+		dbP.value=dbP.secondaryMapping[dbP.key];
+
+		switch (dbP.key) {
+			case "this will never happen":
+                break;
+			default:
+				dbP.sess[dbP.key]=dbP.inspect(dbInfo[dbP.key],dbP.isDetailed);
+				break;
+		}
+    
+		if(dbP.sess[dbP.key]){
+			//Add only value in specific order to use Classifications
+			//dbP.MetricsAssigned.push(dbP.value+">"+dbP.sess[dbP.key]);
+			dbP.EnhancedMetricsAssigned.push(dbP.sess[dbP.key]);	
+		}
+	};
+  //prevent spillover effects from the secondary mapping
+  //was messing with classification
+  dbP.key ='';
+	for(dbP.key in dbP.mapping){
+		if(!dbP._hasProp.call(dbP.mapping,dbP.key))continue;
+		dbP.value=dbP.mapping[dbP.key];
+
+		switch (dbP.key) {
+			case "watch_list_account_type":
+				if (dbP.inspect(dbInfo[dbP.key],dbP.isDetailed) == "error")
+				{
+					wl_accountype = "none";
+				} else {
+					wl_accountype = dbP.inspect(dbInfo[dbP.key],dbP.isDetailed);
+				}
+				dbP.sess[dbP.key]=wl_accountype;
+				break;
+			case "sales_coverage":
+				if (dbP.inspect(dbInfo[dbP.key],dbP.isDetailed) == "error")
+				{
+					wl_salescoverage = "none";
+				} else {
+					wl_salescoverage = dbP.inspect(dbInfo[dbP.key],dbP.isDetailed);
+				}
+				dbP.sess[dbP.key]=wl_salescoverage;
+				break;
+			default:
+				dbP.sess[dbP.key]=dbP.inspect(dbInfo[dbP.key],dbP.isDetailed);
+				break;
+		}
+    
+		if(dbP.sess[dbP.key]){
+			//Add only value in specific order to use Classifications
+			//dbP.MetricsAssigned.push(dbP.value+">"+dbP.sess[dbP.key]);
+			dbP.MetricsAssigned.push(dbP.sess[dbP.key]);	
+		}
+	};
+
+	//Check Domestic vs. International Address
+	/*
+	domestichq = dbP.inspect(dbInfo['domestichq_street_address']+","+dbInfo['domestichq_city']+","+dbInfo['domestichq_state']+","+dbInfo['domestichq_country_name'],dbP.isDetailed);
+	inthq = dbP.inspect(dbInfo['worldhq_street_address']+","+dbInfo['worldhq_city']+","+dbInfo['worldhq_state']+","+dbInfo['worldhq_country_name'],dbP.isDetailed);
+
+	if (domestichq == inthq)
+	{
+		dbP.MetricsAssigned.push("worldhq street address>"+inthq);
+	} else {
+		dbP.MetricsAssigned.push("domestichq street address>"+domestichq);
+		dbP.MetricsAssigned.push("worldhq street address>"+inthq);
+	}
+	*/
+
+	dbP.theResults=dbP.MetricsAssigned.join('|');
+    dbP.secondaryResults=dbP.EnhancedMetricsAssigned.join('|');
+	if(typeof(s)!=='undefined'&&s.tl&&dbP.theResults){
+    
+    _satellite.setCookie('dmdbase',dbP.theResults,0)
+		var trackingObj = {
+			linkTrackVars: 'eVar14,eVar77',
+			eVar14: dbP.theResults
+		}
+		if (dbP.secondaryResults){
+			trackingObj['eVar77'] = dbP.secondaryResults;
+		}
+		s.tl(true,'o',"demandbase",trackingObj);
+
+	}
+	dbP.storeData(dbP.sess);
+};
+
+dbP.setDataMetrics=function(){
+	dbP.sess=dbP.getStoredData();
+	for(dbP.key in dbP.sess){
+		if(!dbP._hasProp.call(dbP.sess,dbP.key))continue;
+		if(dbP.mapping[dbP.key]){
+			dbP.value=dbP.mapping[dbP.key];
+			//Add only value in specific order to use Classifications
+			//dbP.MetricsAssigned.push(dbP.value+">"+dbP.sess[dbP.key]);
+			dbP.MetricsAssigned.push(dbP.sess[dbP.key]);
+		}
+	}
+	dbP.theResults=dbP.MetricsAssigned.join('|');
+  dbP.reStoreData();
+}
+
+/* DEMANDBASE PIXEL CALLS */
+dbP.View=document.createElement('img');
+
+dbP.Retarget=document.createElement('img');
+
+dbP.pxlHost=pxlHost;
+
+dbP.View.src=dbP.pxlHost+'/pixel?id=1390002856&type=js';
+
+dbP.Retarget.src=dbP.pxlHost+'/pixel?id=1390002857&type=js';
+
+dbP.scriptTag.parentNode.insertBefore(dbP.View,null);
+
+dbP.scriptTag.parentNode.insertBefore(dbP.Retarget,null);
+
+dbP.View.style.display='none';
+
+dbP.Retarget.style.display='none';
+
+/* DEMANDBASE API CALL */
+if(!dbP.dataIsStored()){
+	dbP.Api = document.createElement('script');
+	dbP.Api.src='//'+dbP.apiHost+'/api/v2/ip.json?key=cc85c8e1e8cd95682aade667a12c7f0e&callback=dbP.demandbaseParse';
+	dbP.scriptTag.parentNode.insertBefore(dbP.Api, dbP.scriptTag); 
+}else{
+	dbP.setDataMetrics();
+}
